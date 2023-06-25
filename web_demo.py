@@ -2,8 +2,8 @@ from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import mdtex2html
 
-tokenizer = AutoTokenizer.from_pretrained("/mnt/vepfs/workspace/zxdu/chatglm-6b-v2-dev", trust_remote_code=True)
-model = AutoModel.from_pretrained("/mnt/vepfs/workspace/zxdu/chatglm-6b-v2-dev", trust_remote_code=True, device='cuda')
+tokenizer = AutoTokenizer.from_pretrained("chatglm2-6b", trust_remote_code=True)
+model = AutoModel.from_pretrained("chatglm2-6b", trust_remote_code=True, device='cuda').bfloat16()
 model = model.eval()
 
 """Override Chatbot.postprocess"""
@@ -59,7 +59,9 @@ def parse_text(text):
 def predict(input, chatbot, max_length, top_p, temperature, history, past_key_values):
     chatbot.append((parse_text(input), ""))
     for response, history, past_key_values in model.stream_chat(tokenizer, input, history, past_key_values=past_key_values,
-                                               max_length=max_length, top_p=top_p, temperature=temperature):
+                                                                return_past_key_values=True,
+                                                                max_length=max_length, top_p=top_p,
+                                                                temperature=temperature):
         chatbot[-1] = (parse_text(input), parse_text(response))
 
         yield chatbot, history, past_key_values
@@ -74,7 +76,7 @@ def reset_state():
 
 
 with gr.Blocks() as demo:
-    gr.HTML("""<h1 align="center">ChatGLM</h1>""")
+    gr.HTML("""<h1 align="center">ChatGLM2-6B</h1>""")
 
     chatbot = gr.Chatbot()
     with gr.Row():
@@ -86,9 +88,9 @@ with gr.Blocks() as demo:
                 submitBtn = gr.Button("Submit", variant="primary")
         with gr.Column(scale=1):
             emptyBtn = gr.Button("Clear History")
-            max_length = gr.Slider(0, 4096, value=2048, step=1.0, label="Maximum length", interactive=True)
-            top_p = gr.Slider(0, 1, value=0.7, step=0.01, label="Top P", interactive=True)
-            temperature = gr.Slider(0, 1, value=0.95, step=0.01, label="Temperature", interactive=True)
+            max_length = gr.Slider(0, 32768, value=32768, step=1.0, label="Maximum length", interactive=True)
+            top_p = gr.Slider(0, 1, value=0.8, step=0.01, label="Top P", interactive=True)
+            temperature = gr.Slider(0, 1, value=0.8, step=0.01, label="Temperature", interactive=True)
 
     history = gr.State([])
     past_key_values = gr.State(None)
