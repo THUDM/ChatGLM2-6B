@@ -75,7 +75,7 @@ ChatGLM2-6B 使用了 [Multi-Query Attention](http://arxiv.org/abs/1911.02150)�
 | ChatGLM-6B  | 31.49 |
 | ChatGLM2-6B | 44.62 |
 
-> 使用官方实现，Batch size = 1，测试硬件为 A100-SXM-80G，软件环境为 PyTorch 2.0
+> 使用官方实现，batch size = 1，max length = 2048，测试硬件为 A100-SXM-80G，软件环境为 PyTorch 2.0
 
 Multi-Query Attention 同时也降低了生成过程中 KV Cache 的显存占用，此外，ChatGLM2-6B 采用 Causal Mask 进行对话训练，连续对话时可复用前面轮次的 KV Cache，进一步优化了显存占用。因此，使用 6GB 显存的显卡进行 INT4 量化的推理时，初代的 ChatGLM-6B 模型最多能够生成 1119 个字符就会提示显存耗尽，而 ChatGLM2-6B 能够生成至少 8192 个字符。
 
