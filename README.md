@@ -230,7 +230,11 @@ model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).q
 
 模型量化会带来一定的性能损失，经过测试，ChatGLM2-6B 在 4-bit 量化下仍然能够进行自然流畅的生成。
 
-<!-- 量化过程需要在内存中首先加载 FP16 格式的模型，消耗大概 13GB 的内存。如果你的内存不足的话，可以直接加载量化后的模型，INT4 量化后的模型仅需大概 5.2GB 的内存： -->
+如果你的内存不足，可以直接加载量化后的模型：
+```python
+# INT8 量化的模型将"THUDM/chatglm-6b-int4"改为"THUDM/chatglm-6b-int8"
+model = AutoModel.from_pretrained("THUDM/chatglm2-6b-int4",trust_remote_code=True).cuda()
+```
 
 <!-- 量化模型的参数文件也可以从[这里](https://cloud.tsinghua.edu.cn/d/674208019e314311ab5c/)手动下载。 -->
 
@@ -241,11 +245,7 @@ model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).q
 model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).float()
 ```
 
-<!-- 如果你的内存不足，可以直接加载量化后的模型：
-```python
-# INT8 量化的模型将"THUDM/chatglm-6b-int4"改为"THUDM/chatglm-6b-int8"
-model = AutoModel.from_pretrained("THUDM/chatglm-6b-int4",trust_remote_code=True).float()
-```
+<!--
 
 如果遇到了报错 `Could not find module 'nvcuda.dll'` 或者 `RuntimeError: Unknown platform: darwin` (MacOS) ，请[从本地加载模型](README.md#从本地加载模型) -->
 
