@@ -102,19 +102,19 @@ Multi-Query Attention 同时也降低了生成过程中 KV Cache 的显存占用
 
 <details><summary><b>数理逻辑</b></summary>
 
-![](examples/math.png)
+![](resources/math.png)
 
 </details>
 
 <details><summary><b>知识推理</b></summary>
 
-![](examples/knowledge.png)
+![](resources/knowledge.png)
 
 </details>
 
 <details><summary><b>长文档理解</b></summary>
 
-![](examples/long-context.png)
+![](resources/long-context.png)
 
 </details>
 
