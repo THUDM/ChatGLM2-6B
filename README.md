@@ -87,7 +87,12 @@ Multi-Query Attention 同时也降低了生成过程中 KV Cache 的显存占用
 
 > ChatGLM2-6B 利用了 PyTorch 2.0 引入的 `torch.nn.functional.scaled_dot_product_attention` 实现高效的 Attention 计算，如果 PyTorch 版本较低则会 fallback 到朴素的 Attention 实现，出现显存占用高于上表的情况。
 
-我们也测试了量化对模型性能的影响。
+我们也测试了量化对模型性能的影响。结果表明，量化对模型性能的影响在可接受范围内。
+
+| 量化等级 | Accuracy (MMLU) | Accuracy (C-Eval dev) |
+| ----- | ----- |-----------------------|
+| BF16 | 45.47 | 53.57                 |
+| INT4 | 43.13 | 50.30                 |
 
 
 
