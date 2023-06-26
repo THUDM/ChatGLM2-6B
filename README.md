@@ -180,7 +180,18 @@ python web_demo.py
 ```
 
 程序会运行一个 Web Server，并输出地址。在浏览器中打开输出的地址即可使用。
-> 由于国内 Gradio 的网络访问较为缓慢，启用 `demo.queue().launch(share=True, inbrowser=True)` 时所有网络会经过 Gradio 服务器转发，导致打字机体验大幅下降，现在默认启动方式已经改为 `share=False`，如有需要公网访问的需求，可以重新修改为 `share=True` 启动。
+> 默认使用了 `share=False` 启动，不会生成公网链接。如有需要公网访问的需求，可以修改为 `share=True` 启动。
+> 
+
+感谢 [@AdamBear](https://github.com/AdamBear) 实现了基于 Streamlit 的网页版 Demo `web_demo2.py`。使用时首先需要额外安装以下依赖：
+```shell
+pip install streamlit streamlit-chat
+```
+然后通过以下命令运行：
+```shell
+streamlit run web_demo2.py
+```
+经测试，如果输入的 prompt 较长的话，使用基于 Streamlit 的网页版 Demo 会更流畅。
 
 ### 命令行 Demo
 
