@@ -123,16 +123,13 @@ Multi-Query Attention 同时也降低了生成过程中 KV Cache 的显存占用
 
 ## 使用方式
 ### 环境安装
-
-使用 pip 安装依赖：`pip install -r requirements.txt`，其中 `transformers` 库版本推荐为 `4.27.1`，`torch` 推荐使用 2.0 以上的版本，以获得最佳的推理性能。
-
-
-我们提供了一个网页版 Demo 和一个命令行 Demo。使用时首先需要下载本仓库：
-
+首先需要下载本仓库：
 ```shell
 git clone https://github.com/THUDM/ChatGLM2-6B
 cd ChatGLM2-6B
 ```
+
+然后使用 pip 安装依赖：`pip install -r requirements.txt`，其中 `transformers` 库版本推荐为 `4.30.2`，`torch` 推荐使用 2.0 以上的版本，以获得最佳的推理性能。
 
 ### 代码调用 
 
