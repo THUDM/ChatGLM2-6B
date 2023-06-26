@@ -14,7 +14,7 @@ stop_stream = False
 
 
 def build_prompt(history):
-    prompt = "欢迎使用 ChatGLM-6B 模型，输入内容即可进行对话，clear 清空对话历史，stop 终止程序"
+    prompt = "欢迎使用 ChatGLM2-6B 模型，输入内容即可进行对话，clear 清空对话历史，stop 终止程序"
     for query, response in history:
         prompt += f"\n\n用户：{query}"
         prompt += f"\n\nChatGLM-6B：{response}"
