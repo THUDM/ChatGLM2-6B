@@ -157,7 +157,7 @@ async def predict(query: str, history: List[List[str]], model_id: str):
 
 if __name__ == "__main__":
     tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True)
-    model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device="cuda")
+    model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).cuda()
     model.eval()
 
     uvicorn.run(app, host='0.0.0.0', port=8000, workers=1)
