@@ -123,16 +123,13 @@ Multi-Query Attention 同时也降低了生成过程中 KV Cache 的显存占用
 
 ## 使用方式
 ### 环境安装
-
-使用 pip 安装依赖：`pip install -r requirements.txt`，其中 `transformers` 库版本推荐为 `4.27.1`，`torch` 推荐使用 2.0 以上的版本，以获得最佳的推理性能。
-
-
-我们提供了一个网页版 Demo 和一个命令行 Demo。使用时首先需要下载本仓库：
-
+首先需要下载本仓库：
 ```shell
 git clone https://github.com/THUDM/ChatGLM2-6B
 cd ChatGLM2-6B
 ```
+
+然后使用 pip 安装依赖：`pip install -r requirements.txt`，其中 `transformers` 库版本推荐为 `4.30.2`，`torch` 推荐使用 2.0 以上的版本，以获得最佳的推理性能。
 
 ### 代码调用 
 
@@ -183,7 +180,18 @@ python web_demo.py
 ```
 
 程序会运行一个 Web Server，并输出地址。在浏览器中打开输出的地址即可使用。
-> 由于国内 Gradio 的网络访问较为缓慢，启用 `demo.queue().launch(share=True, inbrowser=True)` 时所有网络会经过 Gradio 服务器转发，导致打字机体验大幅下降，现在默认启动方式已经改为 `share=False`，如有需要公网访问的需求，可以重新修改为 `share=True` 启动。
+> 默认使用了 `share=False` 启动，不会生成公网链接。如有需要公网访问的需求，可以修改为 `share=True` 启动。
+> 
+
+感谢 [@AdamBear](https://github.com/AdamBear) 实现了基于 Streamlit 的网页版 Demo `web_demo2.py`。使用时首先需要额外安装以下依赖：
+```shell
+pip install streamlit streamlit-chat
+```
+然后通过以下命令运行：
+```shell
+streamlit run web_demo2.py
+```
+经测试，如果输入的 prompt 较长的话，使用基于 Streamlit 的网页版 Demo 会更流畅。
 
 ### 命令行 Demo
 
@@ -232,7 +240,6 @@ model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).q
 
 如果你的内存不足，可以直接加载量化后的模型：
 ```python
-# INT8 量化的模型将"THUDM/chatglm-6b-int4"改为"THUDM/chatglm-6b-int8"
 model = AutoModel.from_pretrained("THUDM/chatglm2-6b-int4",trust_remote_code=True).cuda()
 ```
 
@@ -244,14 +251,15 @@ model = AutoModel.from_pretrained("THUDM/chatglm2-6b-int4",trust_remote_code=Tru
 ```python
 model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).float()
 ```
-
-<!--
-
-如果遇到了报错 `Could not find module 'nvcuda.dll'` 或者 `RuntimeError: Unknown platform: darwin` (MacOS) ，请[从本地加载模型](README.md#从本地加载模型) -->
+如果你的内存不足的话，也可以使用量化后的模型
+```python
+model = AutoModel.from_pretrained("THUDM/chatglm2-6b-int4",trust_remote_code=True).float()
+```
+在 cpu 上运行量化后的模型需要安装 `gcc` 与 `openmp`。多数 Linux 发行版默认已安装。对于 Windows ，可在安装 [TDM-GCC](https://jmeubank.github.io/tdm-gcc/) 时勾选 `openmp`。 Windows 测试环境 `gcc` 版本为 `TDM-GCC 10.3.0`， Linux 为 `gcc 11.3.0`。在 MacOS 上请参考 [Q1](FAQ.md#q1)。
 
 ### Mac 部署
 
-对于搭载了 Apple Silicon 或者 AMD GPU 的 Mac，可以使用 MPS 后端来在 GPU 上运行 ChatGLM2-6B。需要参考 Apple 的 [官方说明](https://developer.apple.com/metal/pytorch) 安装 PyTorch-Nightly（正确的版本号应该是2.1.0.dev2023xxxx，而不是 2.0.0）。
+对于搭载了 Apple Silicon 或者 AMD GPU 的 Mac，可以使用 MPS 后端来在 GPU 上运行 ChatGLM2-6B。需要参考 Apple 的 [官方说明](https://developer.apple.com/metal/pytorch) 安装 PyTorch-Nightly（正确的版本号应该是2.x.x.dev2023xxxx，而不是 2.x.x）。
 
 目前在 MacOS 上只支持[从本地加载模型](README.md#从本地加载模型)。将代码中的模型加载改为从本地加载，并使用 mps 后端：
 ```python
@@ -259,12 +267,8 @@ model = AutoModel.from_pretrained("your local path", trust_remote_code=True).to(
 ```
 
 加载半精度的 ChatGLM2-6B 模型需要大概 13GB 内存。内存较小的机器（比如 16GB 内存的 MacBook Pro），在空余内存不足的情况下会使用硬盘上的虚拟内存，导致推理速度严重变慢。
-<!-- 此时可以使用量化后的模型如 chatglm-6b-int4。因为 GPU 上量化的 kernel 是使用 CUDA 编写的，因此无法在 MacOS 上使用，只能使用 CPU 进行推理。
-```python
-# INT8 量化的模型将"THUDM/chatglm-6b-int4"改为"THUDM/chatglm-6b-int8"
-model = AutoModel.from_pretrained("THUDM/chatglm-6b-int4",trust_remote_code=True).float()
-```
-为了充分使用 CPU 并行，还需要[单独安装 OpenMP](FAQ.md#q1)。 -->
+此时可以使用量化后的模型 chatglm2-6b-int4。因为 GPU 上量化的 kernel 是使用 CUDA 编写的，因此无法在 MacOS 上使用，只能使用 CPU 进行推理。
+为了充分使用 CPU 并行，还需要[单独安装 OpenMP](FAQ.md#q1)。
 
 ## 协议
 
