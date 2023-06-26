@@ -1,6 +1,6 @@
 # coding=utf-8
 # Implements API for ChatGLM2-6B in OpenAI's format. (https://platform.openai.com/docs/api-reference/chat)
-# Usage: python api_demo.py
+# Usage: python openai_api.py
 # Visit http://localhost:8000/docs for documents.
 
 
