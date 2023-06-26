@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModel
 import readline
 
 tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True)
-model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device='cuda')
+model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).cuda()
 model = model.eval()
 
 os_name = platform.system()

@@ -3,7 +3,7 @@ import gradio as gr
 import mdtex2html
 
 tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True)
-model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device='cuda')
+model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).cuda()
 model = model.eval()
 
 """Override Chatbot.postprocess"""
