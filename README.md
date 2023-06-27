@@ -165,6 +165,13 @@ cd ChatGLM2-6B
 git clone https://huggingface.co/THUDM/chatglm2-6b
 ```
 
+如果你从 Hugging Face Hub 上下载 checkpoint 的速度较慢，可以只下载模型实现
+```Shell
+GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/THUDM/chatglm2-6b
+```
+然后从[这里](https://cloud.tsinghua.edu.cn/d/674208019e314311ab5c/)手动下载模型参数文件，并将下载的文件替换到本地的 `chatglm2-6b` 目录下。
+
+
 将模型下载到本地之后，将以上代码中的 `THUDM/chatglm2-6b` 替换为你本地的 `chatglm2-6b` 文件夹的路径，即可从本地加载模型。
 
 模型的实现仍然处在变动中。如果希望固定使用的模型实现以保证兼容性，可以在 `from_pretrained` 的调用中增加 `revision="v1.0"` 参数。`v1.0` 是当前最新的版本号，完整的版本列表参见 [Change Log](https://huggingface.co/THUDM/chatglm2-6b#change-log)。
@@ -225,6 +232,28 @@ curl -X POST "http://127.0.0.1:8000" \
   "time":"2023-03-23 21:38:40"
 }
 ```
+感谢 [@hiyouga]() 实现了 OpenAI 格式的流式 API 部署，可以作为任意基于 ChatGPT 的应用的后端，比如 [ChatGPT-Next-Web](https://github.com/Yidadaa/ChatGPT-Next-Web)。可以通过运行仓库中的[openai_api.py](openai_api.py) 进行部署：
+```shell
+python openai_api.py
+```
+进行 API 调用的示例代码为
+```python
+import openai
+if __name__ == "__main__":
+    openai.api_base = "http://localhost:8000/v1"
+    openai.api_key = "none"
+    for chunk in openai.ChatCompletion.create(
+        model="chatglm2-6b",
+        messages=[
+            {"role": "user", "content": "你好"}
+        ],
+        stream=True
+    ):
+        if hasattr(chunk.choices[0].delta, "content"):
+            print(chunk.choices[0].delta.content, end="", flush=True)
+```
+
+
 ## 低成本部署
 
 ### 模型量化
