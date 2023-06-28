@@ -25,7 +25,7 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 尽管模型在训练的各个阶段都尽力确保数据的合规性和准确性，但由于 ChatGLM2-6B 模型规模较小，且模型受概率随机性因素影响，无法保证输出内容的准确性，且模型易被误导。**本项目不承担开源模型和代码导致的数据安全、舆情风险或发生任何模型被误导、滥用、传播、不当利用而产生的风险和责任。**
 
 ## 评测结果
-我们选取了部分中英文典型数据集进行了评测，以下为 ChatGLM2-6B 模型在 [MMLU](https://github.com/hendrycks/test) (英文)、[C-Eval](https://cevalbenchmark.com/static/leaderboard.html)（中文）、[GSM8K](https://github.com/openai/grade-school-math)（数学）、[BBH](https://github.com/suzgunmirac/BIG-Bench-Hard)（英文） 上的测评结果。在 [evaluation](./evaluation/README.md) 中提供了在 C-Eval 上进行测评的脚本。
+我们选取了部分中英文典型数据集进行了评测，以下为 ChatGLM2-6B 模型在 [MMLU](https://github.com/hendrycks/test) (英文)、[CMMLU](https://github.com/haonan-li/CMMLU)（中文）、[C-Eval](https://cevalbenchmark.com/static/leaderboard.html)（中文）、[GSM8K](https://github.com/openai/grade-school-math)（数学）、[BBH](https://github.com/suzgunmirac/BIG-Bench-Hard)（英文） 上的测评结果。在 [evaluation](./evaluation/README.md) 中提供了在 C-Eval 上进行测评的脚本。
 
 ### MMLU
 
@@ -36,6 +36,14 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 | ChatGLM2-6B | 45.46 | 40.06 | 51.61 | 41.23 | 51.24 |
 
 > Chat 模型使用 zero-shot CoT (Chain-of-Thought) 的方法测试，Base 模型使用 few-shot answer-only 的方法测试
+
+### CMMLU
+
+| Model | Average | STEM | Humanities | Social Science | Other | China-specific | 
+| ----- | ---- | ---- | ---- | ---- | ---- | ---- |
+| ChatGLM-6B  | 40.79 | 32.22 | 42.91 | 44.81 | 42.60 | 41.93 | 
+| ChatGLM2-6B | 49.95 | 41.28 | 52.85 | 53.37 | 52.24 | 50.58 | 
+> 我们使用zero-shot answer-only的方式测试
 
 ### C-Eval
 
