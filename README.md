@@ -130,6 +130,7 @@ cd ChatGLM2-6B
 ```
 
 然后使用 pip 安装依赖：`pip install -r requirements.txt`，其中 `transformers` 库版本推荐为 `4.30.2`，`torch` 推荐使用 2.0 以上的版本，以获得最佳的推理性能。
+如果是mac电脑请使用`pip install -r requirements_for_mac.txt`
 
 ### 代码调用 
 
