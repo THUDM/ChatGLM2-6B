@@ -119,7 +119,7 @@ Compared to the first-generation model, ChatGLM2-6B has made improvements in mul
 ## Getting Started
 ### Environment Setup
 
-Install dependencies with pip: `pip install -r requirements.txt`. It's recommended to use version `4.27.1` for the `transformers` library and use version 2.0 or higher for `torch` to achieve the best inference performance.
+Install dependencies with pip: `pip install -r requirements.txt`. It's recommended to use version `4.27.1` for the `transformers` library and use version 2.0 or higher for `torch` to achieve the best inference performance. if mac platform please use `pip install -r requirements_for_mac.txt`.
 
 We provide a web page demo and a command line demo. You need to download this repository to use them:
 
