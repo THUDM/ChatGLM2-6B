@@ -157,7 +157,7 @@ cd ChatGLM2-6B
 如果这些方法无法帮助你入睡,你可以考虑咨询医生或睡眠专家,寻求进一步的建议。
 ```
 
-* 针对macbook pro m1max 电脑，请使用以下命令 ``AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device='cuda')``替换
+* 针对macbook pro m1max 电脑，请使用以下命令 ``AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device='cuda')``替换为下面的语句
 
 ```python
 model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).half().to('mps')
