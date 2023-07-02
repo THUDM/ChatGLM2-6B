@@ -14,4 +14,4 @@ EXPOSE 7860
 CMD [ "python3","web_demo.py" ]
 
 ## command for docker run 
-## docker run --rm -it -v /path/to/chatglm2-6b-int4:/workspace/THUDM/chatglm2-6b --gpus=all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all -p 7860:7860 chatglm2:v1  python3 web_demo.py
+## docker run --rm -it -v /home/dengsgo/models/chatglm2-6b-int4:/workspace/THUDM/chatglm2-6b --gpus=all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all -p 7860:7860 chatglm2:v1
