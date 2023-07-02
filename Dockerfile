@@ -1,5 +1,9 @@
 ## use pytorch images
 FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+## lables
+LABEL version="v1"
+LABEL description="chatglm2-6b docker images"
+LABEL maintainer="dengsgo[https://github.com/dengsgo]"
 ## copy all files
 COPY . .
 ## install tools
