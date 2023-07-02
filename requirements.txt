@@ -6,3 +6,4 @@ gradio
 mdtex2html
 sentencepiece
 accelerate
+sse-starlette
