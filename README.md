@@ -131,6 +131,15 @@ cd ChatGLM2-6B
 
 然后使用 pip 安装依赖：`pip install -r requirements.txt`，其中 `transformers` 库版本推荐为 `4.30.2`，`torch` 推荐使用 2.0 以上的版本，以获得最佳的推理性能。
 
+### Docker webUI
+首先需要下载本仓库：
+```shell
+git clone https://github.com/THUDM/ChatGLM2-6B
+cd ChatGLM2-6B
+docker build -t chatglm2:v1 . 
+docker run --rm -it -v /home/dengsgo/models/chatglm2-6b-int4:/workspace/THUDM/chatglm2-6b --gpus=all -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all -p 7860:7860 chatglm2:v1
+```
+
 ### 代码调用 
 
 可以通过如下代码调用 ChatGLM2-6B 模型来生成对话：
