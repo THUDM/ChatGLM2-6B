@@ -5,7 +5,7 @@ from streamlit_chat import message
 st.set_page_config(
     page_title="ChatGLM2-6b 演示",
     page_icon=":robot:"
-    layout='wide'
+    layout='wide',
 )
 
 @st.cache_resource
