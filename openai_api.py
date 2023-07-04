@@ -9,6 +9,7 @@ import torch
 import uvicorn
 from pydantic import BaseModel, Field
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from starlette.responses import StreamingResponse
 from typing import Any, Dict, List, Literal, Optional, Union
@@ -25,6 +26,13 @@ async def lifespan(app: FastAPI): # collects GPU memory
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class ModelCard(BaseModel):
     id: str
