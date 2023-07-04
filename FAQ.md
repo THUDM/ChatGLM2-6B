@@ -12,4 +12,4 @@ sudo tar fvxz openmp-14.0.6-darwin20-Release.tar.gz -C /
 ```
 此时会安装下面几个文件：`/usr/local/lib/libomp.dylib`, `/usr/local/include/ompt.h`, `/usr/local/include/omp.h`, `/usr/local/include/omp-tools.h`。
 
-> 注意：如果你之前运行`ChatGLM`项目失败过，最好清一下Hugging Face的缓存，i.e. 默认下是 `rm -rf ${HOME}/.cache/huggingface/modules/transformers_modules/chatglm-6b-int4`。由于使用了`rm`命令，请明确知道自己在删除什么。
+> 注意：如果你之前运行`ChatGLM2-6B`项目失败过，最好清一下Hugging Face的缓存，i.e. 默认下是 `rm -rf ${HOME}/.cache/huggingface/modules/transformers_modules/chatglm-6b-int4`。由于使用了`rm`命令，请明确知道自己在删除什么。
