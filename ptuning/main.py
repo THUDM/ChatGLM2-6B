@@ -178,7 +178,7 @@ def main():
         return model_inputs
 
     def preprocess_function_train(examples):
-        max_seq_length = data_args.max_source_length + data_args.max_target_length
+        max_seq_length = data_args.max_source_length + data_args.max_target_length + 1
 
         model_inputs = {
             "input_ids": [],
@@ -335,7 +335,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
-        save_prefixencoder=model_args.pre_seq_len is not None
+        save_changed=model_args.pre_seq_len is not None
     )
 
     # Training
