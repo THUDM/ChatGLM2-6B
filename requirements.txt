@@ -7,3 +7,4 @@ mdtex2html
 sentencepiece
 accelerate
 sse-starlette
+streamlit>=1.24.0
