@@ -10,7 +10,7 @@ torchrun --standalone --nnodes=1 --nproc-per-node=$NUM_GPUS main.py \
     --overwrite_cache \
     --prompt_column content \
     --response_column summary \
-    --model_name_or_path chatglm2-6b \
+    --model_name_or_path THUDM/chatglm2-6b \
     --ptuning_checkpoint ./output/$CHECKPOINT/checkpoint-$STEP \
     --output_dir ./output/$CHECKPOINT \
     --overwrite_output_dir \

@@ -316,6 +316,8 @@ model = AutoModel.from_pretrained("your local path", trust_remote_code=True).to(
 此时可以使用量化后的模型 chatglm2-6b-int4。因为 GPU 上量化的 kernel 是使用 CUDA 编写的，因此无法在 MacOS 上使用，只能使用 CPU 进行推理。
 为了充分使用 CPU 并行，还需要[单独安装 OpenMP](FAQ.md#q1)。
 
+在 Mac 上进行推理也可以使用 [ChatGLM.cpp](https://github.com/li-plus/chatglm.cpp)
+
 ### 多卡部署
 如果你有多张 GPU，但是每张 GPU 的显存大小都不足以容纳完整的模型，那么可以将模型切分在多张GPU上。首先安装 accelerate: `pip install accelerate`，然后通过如下方法加载模型：
 ```python

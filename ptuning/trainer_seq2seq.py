@@ -19,7 +19,7 @@ from torch import nn
 from torch.utils.data import Dataset
 
 from transformers.deepspeed import is_deepspeed_zero3_enabled
-from trainer import Trainer
+from trainer import PrefixTrainer
 from transformers.trainer_utils import PredictionOutput
 from transformers.utils import logging
 
@@ -27,7 +27,7 @@ from transformers.utils import logging
 logger = logging.get_logger(__name__)
 
 
-class Seq2SeqTrainer(Trainer):
+class Seq2SeqTrainer(PrefixTrainer):
     def evaluate(
         self,
         eval_dataset: Optional[Dataset] = None,
