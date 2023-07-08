@@ -317,7 +317,7 @@ model = load_model_on_gpus("THUDM/chatglm2-6b", num_gpus=2)
 
 ## 协议
 
-本仓库的代码依照 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) 协议开源，ChatGLM2-6B 模型的权重的使用则需要遵循 [Model License](MODEL_LICENSE)。ChatGLM2-6B 权重对学术研究**完全开放**，在获得官方的书面许可后，亦**允许商业使用**。如果您发现我们的开源模型对您的业务有用，我们欢迎您对下一代模型 ChatGLM3 研发的捐赠。申请商用许可与捐赠请联系 [yiwen.xu@zhipuai.cn](mailto:yiwen.xu@zhipuai.cn)。 
+本仓库的代码依照 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) 协议开源，ChatGLM2-6B 模型的权重的使用则需要遵循 [Model License](MODEL_LICENSE)。ChatGLM2-6B 权重对学术研究**完全开放**，在获得官方的书面许可后，亦**允许商业使用**。如果您发现我们的开源模型对您的业务有用，我们欢迎您对下一代模型 ChatGLM3 研发的捐赠。申请商用许可与捐赠请联系 [license@zhipuai.cn](mailto:license@zhipuai.cn)。 
 
 
 ## 引用
