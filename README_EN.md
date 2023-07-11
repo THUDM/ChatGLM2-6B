@@ -24,6 +24,9 @@ Although the model strives to ensure the compliance and accuracy of data at each
 Open source projects that accelerate ChatGLM2:
 * [chatglm.cpp](https://github.com/li-plus/chatglm.cpp): Real-time CPU inference on a MacBook accelerated by quantization, similar to llama.cpp.
 
+Example projects supporting online training of ChatGLM-6B and related applications:
+* [ChatGLM-6B deployment and fine-tuning tutorial](https://www.heywhale.com/mw/project/64984a7b72ebe240516ae79c)
+
 ## Evaluation
 We selected some typical Chinese and English datasets for evaluation. Below are the evaluation results of the ChatGLM2-6B model on [MMLU](https://github.com/hendrycks/test) (English), [C-Eval](https://cevalbenchmark.com/static/leaderboard.html) (Chinese), [GSM8K](https://github.com/openai/grade-school-math) (Mathematics), [BBH](https://github.com/suzgunmirac/BIG-Bench-Hard) (English).
 
