@@ -33,7 +33,7 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 * [chatglm.cpp](https://github.com/li-plus/chatglm.cpp): 类似 llama.cpp 的 CPU 量化加速推理方案，实现 Mac 笔记本上实时对话
 
 ## 评测结果
-我们选取了部分中英文典型数据集进行了评测，以下为 ChatGLM2-6B 模型在 [MMLU](https://github.com/hendrycks/test) (英文)、[C-Eval](https://cevalbenchmark.com/static/leaderboard.html)（中文）、[GSM8K](https://github.com/openai/grade-school-math)（数学）、[BBH](https://github.com/suzgunmirac/BIG-Bench-Hard)（英文） 上的测评结果。在 [evaluation](./evaluation/README.md) 中提供了在 C-Eval 上进行测评的脚本。
+我们选取了部分中英文典型数据集进行了评测，以下为 ChatGLM2-6B 模型在 [MMLU](https://github.com/hendrycks/test) (英文)、[CMMLU](https://github.com/haonan-li/CMMLU)（中文）、[C-Eval](https://cevalbenchmark.com/static/leaderboard.html)（中文）、[GSM8K](https://github.com/openai/grade-school-math)（数学）、[BBH](https://github.com/suzgunmirac/BIG-Bench-Hard)（英文） 上的测评结果。在 [evaluation](./evaluation/README.md) 中提供了在 C-Eval 上进行测评的脚本。
 
 ### MMLU
 
@@ -44,6 +44,14 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 | ChatGLM2-6B | 45.46 | 40.06 | 51.61 | 41.23 | 51.24 |
 
 > Chat 模型使用 zero-shot CoT (Chain-of-Thought) 的方法测试，Base 模型使用 few-shot answer-only 的方法测试
+
+### CMMLU
+
+| Model | Average | STEM | Humanities | Social Science | Other | China-specific | 
+| ----- | ---- | ---- | ---- | ---- | ---- | ---- |
+| ChatGLM-6B  | 40.79 | 32.22 | 42.91 | 44.81 | 42.60 | 41.93 | 
+| ChatGLM2-6B | 49.95 | 41.28 | 52.85 | 53.37 | 52.24 | 50.58 | 
+> 我们使用zero-shot answer-only的方式测试
 
 ### C-Eval
 
