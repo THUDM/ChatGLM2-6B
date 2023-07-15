@@ -52,9 +52,26 @@ with st.chat_message(name="assistant", avatar="assistant"):
 
 prompt_text = st.text_area(label="用户命令输入",
                            height=100,
-                           placeholder="请在这儿输入您的命令")
+                           placeholder="请在这儿输入您的命令",
+                           key="pt")
 
-button = st.button("发送", key="predict")
+def clear_text():
+    st.session_state["pt"] = ""
+
+col1, col2, col3, col4 = st.columns(4)
+
+with st.form("layout"):
+    with col1:
+        button = st.button("发送", key="predict")
+    with col2:
+        clearButton = st.button("清除命令", key="clear", on_click=clear_text)
+
+if st.button("清除聊天历史内容"):
+    st.error("确定清除所有聊天内容吗？")
+    if st.button("确认"):
+        st.session_state.history = []
+        st.session_state.past_key_values = None
+        st.experimental_rerun()
 
 if button:
     input_placeholder.markdown(prompt_text)
@@ -68,3 +85,4 @@ if button:
 
     st.session_state.history = history
     st.session_state.past_key_values = past_key_values
+    st.experimental_rerun()
