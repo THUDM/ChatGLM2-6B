@@ -12,7 +12,9 @@ ChatGLM**2**-6B is the second-generation version of the open-source bilingual (C
 1. **Stronger Performance**: Based on the development experience of the first-generation ChatGLM model, we have fully upgraded the base model of ChatGLM2-6B. ChatGLM2-6B uses the hybrid objective function of [GLM](https://github.com/THUDM/GLM), and has undergone pre-training with 1.4T bilingual tokens and human preference alignment training. The [evaluation results](README.md#evaluation-results) show that, compared to the first-generation model, ChatGLM2-6B has achieved substantial improvements in performance on datasets like MMLU (+23%), CEval (+33%), GSM8K (+571%), BBH (+60%), showing strong competitiveness among models of the same size.
 2. **Longer Context**: Based on [FlashAttention](https://github.com/HazyResearch/flash-attention) technique, we have extended the context length of the base model from 2K in ChatGLM-6B to 32K, and trained with a context length of 8K during the dialogue alignment, allowing for more rounds of dialogue. However, the current version of ChatGLM2-6B has limited understanding of single-round ultra-long documents, which we will focus on optimizing in future iterations.
 3. **More Efficient Inference**: Based on [Multi-Query Attention](http://arxiv.org/abs/1911.02150) technique, ChatGLM2-6B has more efficient inference speed and lower GPU memory usage: under the official  implementation, the inference speed has increased by 42% compared to the first generation; under INT4 quantization, the dialogue length supported by 6G GPU memory has increased from 1K to 8K.
-4. **More Open License**: The weights of ChatGLM2-6B are **fully open** to academic research, and with our official written permission, the weights of ChatGLM2-6B are also **permitted for commercial use**. If you find our open-source model useful for your business, we welcome your donation towards the development of the next-generation model ChatGLM3.
+4. **More Open License**: ChatGLM2-6B weights are **completely open** for academic research, and **free commercial use** is also allowed after completing the [questionnaire](https://lslfd0slxc.feishu.cn/share/base/form/shrcnfAj1ZnGOW7kqAfiHFcAFXc).
+
+Welcome to use the larger ChatGLM model on [chatglm.cn](https://chatglm.cn) 
 
 -----
 
@@ -238,7 +240,7 @@ Loading a FP16 ChatGLM-6B model requires about 13GB of memory. Machines with les
 
 ## License
 
-The code of this repository is licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). The use of the ChatGLM2-6B model weights is subject to the [Model License](MODEL_LICENSE). ChatGLM2-6B weights are **completely open** for academic research, and **commercial use** is also allowed after **obtaining official written permission**. If you find our open source model useful for your business, we welcome your donations towards the development of the next generation model, ChatGLM3. For related matters, please contact [yiwen.xu@zhipuai.cn](mailto:yiwen.xu@zhipuai.cn).
+The code of this repository is licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). The use of the ChatGLM2-6B model weights is subject to the [Model License](MODEL_LICENSE). ChatGLM2-6B weights are **completely open** for academic research, and **free commercial use** is also allowed after completing the [questionnaire](https://lslfd0slxc.feishu.cn/share/base/form/shrcnfAj1ZnGOW7kqAfiHFcAFXc).
 
 ## Citation
 
