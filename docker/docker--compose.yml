@@ -2,7 +2,7 @@ version: "3"
 services:
   stable-diffusion:
     build:
-      dockerfile: ./Dockerfile
+      dockerfile: ./dockerfile
       context: .
     runtime: nvidia
     environment:
@@ -10,7 +10,7 @@ services:
     working_dir: /app
     ports:
       - "9000:8000"
-    command: bash -c "python web_demo2.py"
+    command: bash -c "python api.py"
     deploy:
       resources:
         reservations:
