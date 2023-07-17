@@ -10,7 +10,7 @@ services:
     working_dir: /app
     ports:
       - "9000:8000"
-    command: bash -c "python api.py"
+    command: bash -c "python web_demo.py"
     deploy:
       resources:
         reservations:

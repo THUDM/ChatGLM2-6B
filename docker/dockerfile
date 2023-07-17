@@ -9,8 +9,10 @@ RUN apt update && apt-get -y install git wget \
 RUN ln -s /usr/bin/python3.10 /usr/bin/python
 RUN useradd -ms /bin/bash usera
 WORKDIR /app
-ADD . .
+ADD .requirements .
 RUN pip config set global.index-url https://mirrors.cloud.tencent.com/pypi/simple
 RUN pip config set global.trusted-host mirrors.cloud.tencent.com
 RUN pip install -r requirements.txt --no-cache-dir
-
+ADD . .
+# preinstall model
+RUN python -c "from transformers import AutoTokenizer, AutoModel; AutoModel.from_pretrained('THUDM/chatglm2-6b', trust_remote_code=True)"
