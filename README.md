@@ -33,6 +33,7 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 对 ChatGLM2 进行加速的开源项目：
 * [fastllm](https://github.com/ztxz16/fastllm/): 全平台加速推理方案，单GPU批量推理每秒可达10000+token，手机端最低3G内存实时运行（骁龙865上约4~5 token/s）
 * [chatglm.cpp](https://github.com/li-plus/chatglm.cpp): 类似 llama.cpp 的 CPU 量化加速推理方案，实现 Mac 笔记本上实时对话
+* [ChatGLM2-TPU](https://github.com/sophgo/ChatGLM2-TPU): 采用TPU加速推理方案，在算能端侧芯片BM1684X（16T@FP16，内存16G）上实时运行约3 token/s
 
 支持 ChatGLM-6B 和相关应用在线训练的示例项目：
 * [ChatGLM2-6B 的部署与微调教程](https://www.heywhale.com/mw/project/64984a7b72ebe240516ae79c)
