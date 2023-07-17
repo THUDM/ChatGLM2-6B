@@ -33,6 +33,7 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 对 ChatGLM2 进行加速的开源项目：
 * [fastllm](https://github.com/ztxz16/fastllm/): 全平台加速推理方案，单GPU批量推理每秒可达10000+token，手机端最低3G内存实时运行（骁龙865上约4~5 token/s）
 * [chatglm.cpp](https://github.com/li-plus/chatglm.cpp): 类似 llama.cpp 的 CPU 量化加速推理方案，实现 Mac 笔记本上实时对话
+* [ChatGLM2-TPU](https://github.com/sophgo/ChatGLM2-TPU): 采用TPU加速推理方案，在算能端侧芯片BM1684X（16T@FP16，内存16G）上实时运行约3 token/s
 
 支持 ChatGLM-6B 和相关应用在线训练的示例项目：
 * [ChatGLM2-6B 的部署与微调教程](https://www.heywhale.com/mw/project/64984a7b72ebe240516ae79c)
@@ -203,6 +204,11 @@ GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/THUDM/chatglm2-6b
 模型的实现仍然处在变动中。如果希望固定使用的模型实现以保证兼容性，可以在 `from_pretrained` 的调用中增加 `revision="v1.0"` 参数。`v1.0` 是当前最新的版本号，完整的版本列表参见 [Change Log](https://huggingface.co/THUDM/chatglm2-6b#change-log)。
 
 ### 网页版 Demo
+![web-demo](resources/web-demo.gif)
+可以通过以下命令启动基于 Gradio 的网页版 demo：
+```shell
+python web_demo.py
+```
 
 ![web-demo](resources/web-demo2.gif)
 
@@ -211,17 +217,7 @@ GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/THUDM/chatglm2-6b
 streamlit run web_demo2.py
 ```
 
-程序会运行一个 Web Server，并输出地址。在浏览器中打开输出的地址即可使用。
-
-
-[web_demo.py](./web_demo.py) 中提供了旧版基于 Gradio 的 web demo，可以通过如下命令运行：
-```shell
-python web_demo.py
-```
-运行效果如下：
-![web-demo](resources/web-demo.gif)
-
-经测试，如果输入的 prompt 较长的话，使用基于 Streamlit 的网页版 Demo 会更流畅。
+网页版 demo 会运行一个 Web Server，并输出地址。在浏览器中打开输出的地址即可使用。 经测试，基于 Streamlit 的网页版 Demo 会更流畅。
 
 ### 命令行 Demo
 
