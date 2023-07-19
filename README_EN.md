@@ -24,7 +24,10 @@ Although the model strives to ensure the compliance and accuracy of data at each
 
 ## Projects
 Open source projects that accelerate ChatGLM2:
+
+* [fastllm](https://github.com/ztxz16/fastllm/): Universal platform acceleration inference solution, single GPU batch inference can reach 10,000+ tokens per second, and it can run in real-time on mobile devices with a minimum of 3GB of memory (about 4~5 tokens/s on Snapdragon 865).
 * [chatglm.cpp](https://github.com/li-plus/chatglm.cpp): Real-time CPU inference on a MacBook accelerated by quantization, similar to llama.cpp.
+* [ChatGLM2-TPU](https://github.com/sophgo/ChatGLM2-TPU): Using the TPU accelerated inference solution, it runs about 3 token/s in real time on the end-side chip BM1684X (16T@FP16, 16G DDR).
 
 Example projects supporting online training of ChatGLM-6B and related applications:
 * [ChatGLM-6B deployment and fine-tuning tutorial](https://www.heywhale.com/mw/project/64984a7b72ebe240516ae79c)
