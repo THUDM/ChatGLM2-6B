@@ -112,7 +112,7 @@ def main():
     if model_args.ptuning_checkpoint is not None:
         # Evaluation
         # Loading extra state dict of prefix encoder
-        model = AutoModel.from_pretrained(model_args.model_name_or_path, config=config, trust_remote_code=True)
+        model = AutoModel.from_pretrained(model_args.model_name_or_path, config=config, trust_remote_code=True, device='cuda')
         prefix_state_dict = torch.load(os.path.join(model_args.ptuning_checkpoint, "pytorch_model.bin"))
         new_prefix_state_dict = {}
         for k, v in prefix_state_dict.items():
@@ -120,7 +120,7 @@ def main():
                 new_prefix_state_dict[k[len("transformer.prefix_encoder."):]] = v
         model.transformer.prefix_encoder.load_state_dict(new_prefix_state_dict)
     else:
-        model = AutoModel.from_pretrained(model_args.model_name_or_path, config=config, trust_remote_code=True)
+        model = AutoModel.from_pretrained(model_args.model_name_or_path, config=config, trust_remote_code=True, device='cuda')
 
     if model_args.quantization_bit is not None:
         print(f"Quantized to {model_args.quantization_bit} bit")
