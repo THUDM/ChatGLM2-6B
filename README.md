@@ -46,30 +46,35 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 ### MMLU
 
 | Model | Average | STEM | Social Sciences | Humanities | Others |
-| ----- | ----- | ---- | ----- | ----- | ----- |
+| ----- |------| ---- |------|-------| ----- |
 | ChatGLM-6B | 40.63 | 33.89 | 44.84 | 39.02 | 45.71 |
 | ChatGLM2-6B (base) | 47.86 | 41.20 | 54.44 | 43.66 | 54.46 |
 | ChatGLM2-6B | 45.46 | 40.06 | 51.61 | 41.23 | 51.24 |
+| ChatGLM2-12B (base) | 56.18 | 48.18 | 65.13 | 52.58 | 60.93 |
+| ChatGLM2-12B | 52.13 | 47.00 | 61.00 | 46.10 | 56.05 |
 
 > Chat 模型使用 zero-shot CoT (Chain-of-Thought) 的方法测试，Base 模型使用 few-shot answer-only 的方法测试
 
 ### C-Eval
 
 | Model | Average | STEM | Social Sciences | Humanities | Others |
-| ----- | ---- | ---- | ----- | ----- | ----- |
-| ChatGLM-6B | 38.9 | 33.3 | 48.3 | 41.3 | 38.0 |
-| ChatGLM2-6B (base) | 51.7 | 48.6 | 60.5 | 51.3 | 49.8 |
-| ChatGLM2-6B | 50.1 | 46.4	| 60.4 | 50.6 | 46.9 | 
+| ----- | ---- | ---- | ----- |------------|--------|
+| ChatGLM-6B | 38.9 | 33.3 | 48.3 | 41.3       | 38.0   |
+| ChatGLM2-6B (base) | 51.7 | 48.6 | 60.5 | 51.3       | 49.8   |
+| ChatGLM2-6B | 50.1 | 46.4	| 60.4 | 50.6       | 46.9   |
+| ChatGLM2-12B (base) | 61.6    | 55.4	| 73.7 | 64.2       | 59.4   | 
 
 > Chat 模型使用 zero-shot CoT 的方法测试，Base 模型使用 few-shot answer only 的方法测试
 
 ### GSM8K
 
-| Model | Accuracy | Accuracy (Chinese)* |
-| ----- | ----- | ----- |
-| ChatGLM-6B | 4.82 | 5.85 |
-| ChatGLM2-6B (base) | 32.37 | 28.95 |
-| ChatGLM2-6B | 28.05 | 20.45 |
+| Model        | Accuracy | Accuracy (Chinese)* |
+|--------------|----------| - |
+| ChatGLM-6B   | 4.82     | 5.85 |
+| ChatGLM2-6B (base) | 32.37    | 28.95 |
+| ChatGLM2-6B  | 28.05    | 20.45 |
+| ChatGLM2-12B (base) | 40.94    | 42.71 |
+| ChatGLM2-12B | 38.13    | 23.43 |
 
 > 所有模型均使用 few-shot CoT 的方法测试，CoT prompt 来自 http://arxiv.org/abs/2201.11903
 > 
@@ -78,11 +83,13 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 
 ### BBH
 
-| Model | Accuracy |
-| ----- | ----- |
-| ChatGLM-6B | 18.73 |
+| Model        | Accuracy |
+|--------------|-------|
+| ChatGLM-6B   | 18.73 |
 | ChatGLM2-6B (base) | 33.68 |
-| ChatGLM2-6B | 30.00 |
+| ChatGLM2-6B  | 30.00 |
+| ChatGLM2-12B (base) | 36.02 |
+| ChatGLM2-12B | 39.98 |
 
 > 所有模型均使用 few-shot CoT 的方法测试，CoT prompt 来自 https://github.com/suzgunmirac/BIG-Bench-Hard/tree/main/cot-prompts
 
