@@ -5,6 +5,8 @@
 
 
 import time
+
+import tiktoken
 import torch
 import uvicorn
 from pydantic import BaseModel, Field
@@ -17,7 +19,7 @@ from sse_starlette.sse import ServerSentEvent, EventSourceResponse
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI): # collects GPU memory
+async def lifespan(app: FastAPI):  # collects GPU memory
     yield
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
@@ -33,6 +35,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 class ModelCard(BaseModel):
     id: str
@@ -85,6 +88,7 @@ class ChatCompletionResponse(BaseModel):
     object: Literal["chat.completion", "chat.completion.chunk"]
     choices: List[Union[ChatCompletionResponseChoice, ChatCompletionResponseStreamChoice]]
     created: Optional[int] = Field(default_factory=lambda: int(time.time()))
+    usage: dict
 
 
 @app.get("/v1/models", response_model=ModelList)
@@ -109,8 +113,8 @@ async def create_chat_completion(request: ChatCompletionRequest):
     history = []
     if len(prev_messages) % 2 == 0:
         for i in range(0, len(prev_messages), 2):
-            if prev_messages[i].role == "user" and prev_messages[i+1].role == "assistant":
-                history.append([prev_messages[i].content, prev_messages[i+1].content])
+            if prev_messages[i].role == "user" and prev_messages[i + 1].role == "assistant":
+                history.append([prev_messages[i].content, prev_messages[i + 1].content])
 
     if request.stream:
         generate = predict(query, history, request.model)
@@ -122,8 +126,16 @@ async def create_chat_completion(request: ChatCompletionRequest):
         message=ChatMessage(role="assistant", content=response),
         finish_reason="stop"
     )
-
-    return ChatCompletionResponse(model=request.model, choices=[choice_data], object="chat.completion")
+    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    pt = len(encoding.encode(query))
+    rt = len(encoding.encode(response))
+    usage_data = {
+        "prompt_tokens": pt,
+        "completion_tokens": rt,
+        "total_tokens": pt + rt
+    }
+    return ChatCompletionResponse(model=request.model, choices=[choice_data], object="chat.completion",
+                                  usage=usage_data)
 
 
 async def predict(query: str, history: List[List[str]], model_id: str):
@@ -154,7 +166,6 @@ async def predict(query: str, history: List[List[str]], model_id: str):
         chunk = ChatCompletionResponse(model=model_id, choices=[choice_data], object="chat.completion.chunk")
         yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
 
-
     choice_data = ChatCompletionResponseStreamChoice(
         index=0,
         delta=DeltaMessage(),
@@ -163,7 +174,6 @@ async def predict(query: str, history: List[List[str]], model_id: str):
     chunk = ChatCompletionResponse(model=model_id, choices=[choice_data], object="chat.completion.chunk")
     yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
     yield '[DONE]'
-
 
 
 if __name__ == "__main__":
