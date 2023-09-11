@@ -41,6 +41,9 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 * [chatglm.cpp](https://github.com/li-plus/chatglm.cpp): 类似 llama.cpp 的 CPU 量化加速推理方案，实现 Mac 笔记本上实时对话
 * [ChatGLM2-TPU](https://github.com/sophgo/ChatGLM2-TPU): 采用TPU加速推理方案，在算能端侧芯片BM1684X（16T@FP16，内存16G）上实时运行约5 token/s
 
+基于或使用了 ChatGLM2-6B 的开源项目：
+* [Chuanhu Chat](https://github.com/GaiZhenbiao/ChuanhuChatGPT): 为各个大语言模型和在线模型API提供美观易用、功能丰富、快速部署的用户界面，支持ChatGLM2-6B。
+
 支持 ChatGLM-6B 和相关应用在线训练的示例项目：
 * [ChatGLM2-6B 的部署与微调教程](https://www.heywhale.com/mw/project/64984a7b72ebe240516ae79c)
 
