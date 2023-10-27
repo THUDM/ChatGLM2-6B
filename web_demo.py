@@ -8,6 +8,11 @@ model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).c
 # 多显卡支持，使用下面两行代替上面一行，将num_gpus改为你实际的显卡数量
 # from utils import load_model_on_gpus
 # model = load_model_on_gpus("THUDM/chatglm2-6b", num_gpus=2)
+
+# 量化int4模型示例 替换第八行即可 quantize 对应gpt内存大小（适用于gpu不够的笔记本用户，如gpu为4G，采用前者，gpu为8G，采用后者）
+# model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).half().quantize(4).cuda()
+# model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).half().quantize(8).cuda()
+
 model = model.eval()
 
 """Override Chatbot.postprocess"""
