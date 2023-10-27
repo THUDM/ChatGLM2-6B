@@ -6,7 +6,7 @@
 ## 软件依赖
 运行微调除 ChatGLM2-6B 的依赖之外，还需要安装以下依赖
 ```
-pip install rouge_chinese nltk jieba datasets
+pip install rouge_chinese nltk jieba datasets accelerate cpm_kernels
 ```
 ## 使用方法
 
