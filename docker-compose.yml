@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+  chatglm2-6b:
+    profiles: ["int16"]
+    build:
+      context: .
+    ports:
+      - 7860:7860
+      - 8000:8000
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./THUDM/chatglm2-6b:/app/THUDM/chatglm2-6b
+    environment:
+      - CLI_ARGS=$START_MODE
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [gpu]
+
+  chatglm2-6b-int4:
+    profiles: ["int4"]
+    build:
+      context: .
+    ports:
+      - 7860:7860
+      - 8000:8000
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./THUDM/chatglm2-6b-int4:/app/THUDM/chatglm2-6b
+    environment:
+      - CLI_ARGS=$START_MODE
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [gpu]
