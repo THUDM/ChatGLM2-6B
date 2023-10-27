@@ -13,6 +13,8 @@
 
 *Read this in [English](README_EN.md)*
 
+新一代开源模型 [ChatGLM3-6B](https://github.com/THUDM/ChatGLM3) 已发布，拥有10B以下最强的基础模型，支持工具调用（Function Call）、代码执行（Code Interpreter）、Agent 任务等功能。
+
 ## 介绍
 
 ChatGLM**2**-6B 是开源中英双语对话模型 [ChatGLM-6B](https://github.com/THUDM/ChatGLM-6B) 的第二代版本，在保留了初代模型对话流畅、部署门槛较低等众多优秀特性的基础之上，ChatGLM**2**-6B 引入了如下新特性：
