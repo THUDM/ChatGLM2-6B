@@ -1,7 +1,7 @@
 PRE_SEQ_LEN=128
 LR=2e-2
 NUM_GPUS=1
-
+WANDB_DISABLED=true \
 torchrun --standalone --nnodes=1 --nproc-per-node=$NUM_GPUS main.py \
     --do_train \
     --train_file AdvertiseGen/train.json \

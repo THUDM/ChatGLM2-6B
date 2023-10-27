@@ -32,7 +32,10 @@ bash train.sh
 ```
 `train.sh` 中的 `PRE_SEQ_LEN` 和 `LR` 分别是 soft prompt 长度和训练的学习率，可以进行调节以取得最佳的效果。P-Tuning-v2 方法会冻结全部的模型参数，可通过调整 `quantization_bit` 来被原始模型的量化等级，不加此选项则为 FP16 精度加载。
 
+
 在默认配置 `quantization_bit=4`、`per_device_train_batch_size=1`、`gradient_accumulation_steps=16` 下，INT4 的模型参数被冻结，一次训练迭代会以 1 的批处理大小进行 16 次累加的前后向传播，等效为 16 的总批处理大小，此时最低只需 6.7G 显存。若想在同等批处理大小下提升训练效率，可在二者乘积不变的情况下，加大 `per_device_train_batch_size` 的值，但也会带来更多的显存消耗，请根据实际情况酌情调整。
+
+脚本默认关闭了wandb的实验数据可视化对接，可修改脚本的`WANDB_DISABLED`变量打开。
 
 如果你想要[从本地加载模型](../README.md#从本地加载模型)，可以将 `train.sh` 中的 `THUDM/chatglm2-6b` 改为你本地的模型路径。
 
