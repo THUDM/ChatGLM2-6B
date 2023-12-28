@@ -21,8 +21,9 @@ Fine-tuning the library models for sequence to sequence for P-Tuning v2
 # CUDA_VISIBLE_DEVICES=-1 python finetune-p-tuning-v2.py
 
 # accelerate launch --cpu --num_machines=1 --num_processes=1 --num_cpu_threads_per_process=1 finetune-p-tuning-v2.py
+# accelerate launch --cpu --num_machines=1 --num_processes=4 --num_cpu_threads_per_process=1 finetune-p-tuning-v2.py
 
-import logging
+# import logging
 import os
 import sys
 import json
@@ -45,34 +46,42 @@ from transformers import (
     # set_seed,
 )
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+# from typing import Any, Dict, List, Optional, Tuple, Union
 
-import torch
-from torch import nn
-from torch.utils.data import Dataset
+# import torch
+# from torch import nn
+# from torch.utils.data import Dataset
 
-from transformers.deepspeed import is_deepspeed_zero3_enabled
+# from transformers.deepspeed import is_deepspeed_zero3_enabled
 # from trainer import PrefixTrainer
-from transformers.trainer_utils import PredictionOutput
+# from transformers.trainer_utils import PredictionOutput
 # from transformers.utils import logging
 
-import os
-from typing import Optional
+# import os
+# from typing import Optional
 from transformers import Trainer
 
-import torch
-from transformers.modeling_utils import PreTrainedModel, unwrap_model
+# import torch
+# from transformers.modeling_utils import PreTrainedModel, unwrap_model
 # from transformers.utils import logging
 
 # from trainer_seq2seq import Seq2SeqTrainer
 
 # from arguments import ModelArguments, DataTrainingArguments
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
 
 def main():
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    # print(torch.backends.mps.is_available())
+    # print(torch.backends.mps.is_built())
+    device = torch.device("cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
     print("device:", device)
     # parser = HfArgumentParser((ModelArguments, DataTrainingArguments, Seq2SeqTrainingArguments))
     # if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
@@ -162,9 +171,13 @@ def main():
     #     # Finetune
     #     model = model.float()
     
-    # P-tuning v2
+    # P-tuning v2, do not work for accelerate
     model = model.half()
     model.transformer.prefix_encoder.float()
+    
+    # finetune, work for accelerate
+    # model = model.float()
+    
     print('model half done')
 
     prefix = ""
@@ -257,12 +270,12 @@ def main():
         train_dataset = train_dataset.map(
             preprocess_function_train,
             batched=True,
-            num_proc=10,
+            num_proc=5,
             remove_columns=column_names,
             load_from_cache_file=False,
             desc="Running tokenizer on train dataset",
         )
-        print_dataset_example(train_dataset[0])
+        # print_dataset_example(train_dataset[0])
 
     max_eval_samples = 5
     do_eval = True
@@ -278,7 +291,7 @@ def main():
             load_from_cache_file=False,
             desc="Running tokenizer on validation dataset",
         )
-        print_dataset_example(eval_dataset[0])
+        # print_dataset_example(eval_dataset[0])
 
     # if training_args.do_predict:
     #     max_target_length = data_args.val_max_target_length
@@ -309,38 +322,39 @@ def main():
         padding=False
     )
     print("data_collator done")
-    # # Metric
-    # def compute_metrics(eval_preds):
-    #     preds, labels = eval_preds
-    #     if isinstance(preds, tuple):
-    #         preds = preds[0]
-    #     decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
-    #     if ignore_pad_token_for_loss:
-    #         # Replace -100 in the labels as we can't decode them.
-    #         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
-    #     decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+    
+    # Metric
+    def compute_metrics(eval_preds):
+        preds, labels = eval_preds
+        if isinstance(preds, tuple):
+            preds = preds[0]
+        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+        if ignore_pad_token_for_loss:
+            # Replace -100 in the labels as we can't decode them.
+            labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
+        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
-    #     score_dict = {
-    #         "rouge-1": [],
-    #         "rouge-2": [],
-    #         "rouge-l": [],
-    #         "bleu-4": []
-    #     }
-    #     for pred, label in zip(decoded_preds, decoded_labels):
-    #         hypothesis = list(jieba.cut(pred))
-    #         reference = list(jieba.cut(label))
-    #         rouge = Rouge()
-    #         scores = rouge.get_scores(' '.join(hypothesis) , ' '.join(reference))
-    #         result = scores[0]
+        score_dict = {
+            "rouge-1": [],
+            "rouge-2": [],
+            "rouge-l": [],
+            "bleu-4": []
+        }
+        for pred, label in zip(decoded_preds, decoded_labels):
+            hypothesis = list(jieba.cut(pred))
+            reference = list(jieba.cut(label))
+            rouge = Rouge()
+            scores = rouge.get_scores(' '.join(hypothesis) , ' '.join(reference))
+            result = scores[0]
             
-    #         for k, v in result.items():
-    #             score_dict[k].append(round(v["f"] * 100, 4))
-    #         bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
-    #         score_dict["bleu-4"].append(round(bleu_score * 100, 4))
+            for k, v in result.items():
+                score_dict[k].append(round(v["f"] * 100, 4))
+            bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
+            score_dict["bleu-4"].append(round(bleu_score * 100, 4))
 
-    #     for k, v in score_dict.items():
-    #         score_dict[k] = float(np.mean(v))
-    #     return score_dict
+        for k, v in score_dict.items():
+            score_dict[k] = float(np.mean(v))
+        return score_dict
 
     # Override the decoding parameters of Seq2SeqTrainer
     # training_args.generation_max_length = (
@@ -351,40 +365,52 @@ def main():
     # training_args.generation_num_beams = (
     #     data_args.num_beams if data_args.num_beams is not None else training_args.generation_num_beams
     # )
+    
     # Initialize our Trainer
-    trainer = Seq2SeqTrainer(
-        model=model,
-        # args=training_args,
+    # trainer = Seq2SeqTrainer(
+    #     model=model,
+    #     # args=training_args,
+    #     train_dataset=train_dataset,
+    #     eval_dataset=eval_dataset,
+    #     tokenizer=tokenizer,
+    #     data_collator=data_collator,
+    #     compute_metrics=compute_metrics,
+    #     save_changed=PRE_SEQ_LEN is not None
+    # )
+    
+    trainer = Trainer(
+        model,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         tokenizer=tokenizer,
         data_collator=data_collator,
-        # compute_metrics=compute_metrics if training_args.predict_with_generate else None,
-        save_changed=PRE_SEQ_LEN is not None
+        compute_metrics=compute_metrics,
     )
     print('build trainer done')
     
     # Training
     if do_train:
-        checkpoint = False
+        # checkpoint = False
         # if training_args.resume_from_checkpoint is not None:
         #     checkpoint = training_args.resume_from_checkpoint
         # elif last_checkpoint is not None:
         #     checkpoint = last_checkpoint
         model.gradient_checkpointing_enable()
         model.enable_input_require_grads()
-        logger.info("begin trainning")
-        train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        print("begin trainning")
+        # train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        train_result = trainer.train()
         # trainer.save_model()  # Saves the tokenizer too for easy upload
-        logger.info("done trainning")
+        print("done trainning")
         metrics = train_result.metrics
         max_train_samples = len(train_dataset)
         metrics["train_samples"] = min(max_train_samples, len(train_dataset))
-
         trainer.log_metrics("train", metrics)
         trainer.save_metrics("train", metrics)
         trainer.save_state()
-        logger.info("save state")
+        print("save state")
+        # trainer.save_model("tmp_trainer/ptuning")
+        print("save model")
 
     # # Evaluation
     # results = {}
@@ -427,268 +453,267 @@ def main():
     #                     writer.write(f"{res}\n")
     # return results
 
-WEIGHTS_NAME = "pytorch_model.bin"
-TRAINING_ARGS_NAME = "training_args.bin"
+# WEIGHTS_NAME = "pytorch_model.bin"
+# TRAINING_ARGS_NAME = "training_args.bin"
 
-class PrefixTrainer(Trainer):
-    def __init__(self, *args, save_changed=False, **kwargs):
-        self.save_changed = save_changed
-        super().__init__(*args, **kwargs)
+# class PrefixTrainer(Trainer):
+#     def __init__(self, *args, save_changed=False, **kwargs):
+#         self.save_changed = save_changed
+#         super().__init__(*args, **kwargs)
 
-    def _save(self, output_dir: Optional[str] = None, state_dict=None):
-        # If we are executing this function, we are the process zero, so we don't check for that.
-        output_dir = output_dir if output_dir is not None else self.args.output_dir
-        os.makedirs(output_dir, exist_ok=True)
-        logger.info(f"Saving model checkpoint to {output_dir}")
-        # Save a trained model and configuration using `save_pretrained()`.
-        # They can then be reloaded using `from_pretrained()`
-        if not isinstance(self.model, PreTrainedModel):
-            if isinstance(unwrap_model(self.model), PreTrainedModel):
-                if state_dict is None:
-                    state_dict = self.model.state_dict()
-                unwrap_model(self.model).save_pretrained(output_dir, state_dict=state_dict)
-            else:
-                logger.info("Trainer.model is not a `PreTrainedModel`, only saving its state dict.")
-                if state_dict is None:
-                    state_dict = self.model.state_dict()
-                torch.save(state_dict, os.path.join(output_dir, WEIGHTS_NAME))
-        else:
-            if self.save_changed:
-                print("Saving PrefixEncoder")
-                state_dict = self.model.state_dict()
-                filtered_state_dict = {}
-                for k, v in self.model.named_parameters():
-                    if v.requires_grad:
-                        filtered_state_dict[k] = state_dict[k]
-                self.model.save_pretrained(output_dir, state_dict=filtered_state_dict)
-            else:
-                print("Saving the whole model")
-                self.model.save_pretrained(output_dir, state_dict=state_dict)
-        if self.tokenizer is not None:
-            self.tokenizer.save_pretrained(output_dir)
+#     def _save(self, output_dir: Optional[str] = None, state_dict=None):
+#         # If we are executing this function, we are the process zero, so we don't check for that.
+#         output_dir = output_dir if output_dir is not None else self.args.output_dir
+#         os.makedirs(output_dir, exist_ok=True)
+#         logger.info(f"Saving model checkpoint to {output_dir}")
+#         # Save a trained model and configuration using `save_pretrained()`.
+#         # They can then be reloaded using `from_pretrained()`
+#         if not isinstance(self.model, PreTrainedModel):
+#             if isinstance(unwrap_model(self.model), PreTrainedModel):
+#                 if state_dict is None:
+#                     state_dict = self.model.state_dict()
+#                 unwrap_model(self.model).save_pretrained(output_dir, state_dict=state_dict)
+#             else:
+#                 logger.info("Trainer.model is not a `PreTrainedModel`, only saving its state dict.")
+#                 if state_dict is None:
+#                     state_dict = self.model.state_dict()
+#                 torch.save(state_dict, os.path.join(output_dir, WEIGHTS_NAME))
+#         else:
+#             if self.save_changed:
+#                 print("Saving PrefixEncoder")
+#                 state_dict = self.model.state_dict()
+#                 filtered_state_dict = {}
+#                 for k, v in self.model.named_parameters():
+#                     if v.requires_grad:
+#                         filtered_state_dict[k] = state_dict[k]
+#                 self.model.save_pretrained(output_dir, state_dict=filtered_state_dict)
+#             else:
+#                 print("Saving the whole model")
+#                 self.model.save_pretrained(output_dir, state_dict=state_dict)
+#         if self.tokenizer is not None:
+#             self.tokenizer.save_pretrained(output_dir)
 
-        # Good practice: save your training arguments together with the trained model
-        torch.save(self.args, os.path.join(output_dir, TRAINING_ARGS_NAME))
+#         # Good practice: save your training arguments together with the trained model
+#         torch.save(self.args, os.path.join(output_dir, TRAINING_ARGS_NAME))
+
+# class Seq2SeqTrainer(PrefixTrainer):
+#     def evaluate(
+#         self,
+#         eval_dataset: Optional[Dataset] = None,
+#         ignore_keys: Optional[List[str]] = None,
+#         metric_key_prefix: str = "eval",
+#         **gen_kwargs
+#     ) -> Dict[str, float]:
+#         """
+#         Run evaluation and returns metrics.
+
+#         The calling script will be responsible for providing a method to compute metrics, as they are task-dependent
+#         (pass it to the init `compute_metrics` argument).
+
+#         You can also subclass and override this method to inject custom behavior.
+
+#         Args:
+#             eval_dataset (`Dataset`, *optional*):
+#                 Pass a dataset if you wish to override `self.eval_dataset`. If it is an [`~datasets.Dataset`], columns
+#                 not accepted by the `model.forward()` method are automatically removed. It must implement the `__len__`
+#                 method.
+#             ignore_keys (`List[str]`, *optional*):
+#                 A list of keys in the output of your model (if it is a dictionary) that should be ignored when
+#                 gathering predictions.
+#             metric_key_prefix (`str`, *optional*, defaults to `"eval"`):
+#                 An optional prefix to be used as the metrics key prefix. For example the metrics "bleu" will be named
+#                 "eval_bleu" if the prefix is `"eval"` (default)
+#             max_length (`int`, *optional*):
+#                 The maximum target length to use when predicting with the generate method.
+#             num_beams (`int`, *optional*):
+#                 Number of beams for beam search that will be used when predicting with the generate method. 1 means no
+#                 beam search.
+#             gen_kwargs:
+#                 Additional `generate` specific kwargs.
+
+#         Returns:
+#             A dictionary containing the evaluation loss and the potential metrics computed from the predictions. The
+#             dictionary also contains the epoch number which comes from the training state.
+#         """
+
+#         gen_kwargs = gen_kwargs.copy()
+#         if gen_kwargs.get("max_length") is None and gen_kwargs.get("max_new_tokens") is None:
+#             gen_kwargs["max_length"] = self.args.generation_max_length
+#         gen_kwargs["num_beams"] = (
+#             gen_kwargs["num_beams"] if gen_kwargs.get("num_beams") is not None else self.args.generation_num_beams
+#         )
+#         self._gen_kwargs = gen_kwargs
+
+#         return super().evaluate(eval_dataset, ignore_keys=ignore_keys, metric_key_prefix=metric_key_prefix)
+
+#     def predict(
+#         self,
+#         test_dataset: Dataset,
+#         ignore_keys: Optional[List[str]] = None,
+#         metric_key_prefix: str = "test",
+#         **gen_kwargs
+#     ) -> PredictionOutput:
+#         """
+#         Run prediction and returns predictions and potential metrics.
+
+#         Depending on the dataset and your use case, your test dataset may contain labels. In that case, this method
+#         will also return metrics, like in `evaluate()`.
+
+#         Args:
+#             test_dataset (`Dataset`):
+#                 Dataset to run the predictions on. If it is a [`~datasets.Dataset`], columns not accepted by the
+#                 `model.forward()` method are automatically removed. Has to implement the method `__len__`
+#             ignore_keys (`List[str]`, *optional*):
+#                 A list of keys in the output of your model (if it is a dictionary) that should be ignored when
+#                 gathering predictions.
+#             metric_key_prefix (`str`, *optional*, defaults to `"eval"`):
+#                 An optional prefix to be used as the metrics key prefix. For example the metrics "bleu" will be named
+#                 "eval_bleu" if the prefix is `"eval"` (default)
+#             max_length (`int`, *optional*):
+#                 The maximum target length to use when predicting with the generate method.
+#             num_beams (`int`, *optional*):
+#                 Number of beams for beam search that will be used when predicting with the generate method. 1 means no
+#                 beam search.
+#             gen_kwargs:
+#                 Additional `generate` specific kwargs.
+
+#         <Tip>
+
+#         If your predictions or labels have different sequence lengths (for instance because you're doing dynamic
+#         padding in a token classification task) the predictions will be padded (on the right) to allow for
+#         concatenation into one array. The padding index is -100.
+
+#         </Tip>
+
+#         Returns: *NamedTuple* A namedtuple with the following keys:
+
+#             - predictions (`np.ndarray`): The predictions on `test_dataset`.
+#             - label_ids (`np.ndarray`, *optional*): The labels (if the dataset contained some).
+#             - metrics (`Dict[str, float]`, *optional*): The potential dictionary of metrics (if the dataset contained
+#               labels).
+#         """
+
+#         gen_kwargs = gen_kwargs.copy()
+#         if gen_kwargs.get("max_length") is None and gen_kwargs.get("max_new_tokens") is None:
+#             gen_kwargs["max_length"] = self.args.generation_max_length
+#         gen_kwargs["num_beams"] = (
+#             gen_kwargs["num_beams"] if gen_kwargs.get("num_beams") is not None else self.args.generation_num_beams
+#         )
+#         self._gen_kwargs = gen_kwargs
 
 
-class Seq2SeqTrainer(PrefixTrainer):
-    def evaluate(
-        self,
-        eval_dataset: Optional[Dataset] = None,
-        ignore_keys: Optional[List[str]] = None,
-        metric_key_prefix: str = "eval",
-        **gen_kwargs
-    ) -> Dict[str, float]:
-        """
-        Run evaluation and returns metrics.
+#         return super().predict(test_dataset, ignore_keys=ignore_keys, metric_key_prefix=metric_key_prefix)
 
-        The calling script will be responsible for providing a method to compute metrics, as they are task-dependent
-        (pass it to the init `compute_metrics` argument).
+#     def prediction_step(
+#         self,
+#         model: nn.Module,
+#         inputs: Dict[str, Union[torch.Tensor, Any]],
+#         prediction_loss_only: bool,
+#         ignore_keys: Optional[List[str]] = None,
+#     ) -> Tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]:
+#         """
+#         Perform an evaluation step on `model` using `inputs`.
 
-        You can also subclass and override this method to inject custom behavior.
+#         Subclass and override to inject custom behavior.
 
-        Args:
-            eval_dataset (`Dataset`, *optional*):
-                Pass a dataset if you wish to override `self.eval_dataset`. If it is an [`~datasets.Dataset`], columns
-                not accepted by the `model.forward()` method are automatically removed. It must implement the `__len__`
-                method.
-            ignore_keys (`List[str]`, *optional*):
-                A list of keys in the output of your model (if it is a dictionary) that should be ignored when
-                gathering predictions.
-            metric_key_prefix (`str`, *optional*, defaults to `"eval"`):
-                An optional prefix to be used as the metrics key prefix. For example the metrics "bleu" will be named
-                "eval_bleu" if the prefix is `"eval"` (default)
-            max_length (`int`, *optional*):
-                The maximum target length to use when predicting with the generate method.
-            num_beams (`int`, *optional*):
-                Number of beams for beam search that will be used when predicting with the generate method. 1 means no
-                beam search.
-            gen_kwargs:
-                Additional `generate` specific kwargs.
+#         Args:
+#             model (`nn.Module`):
+#                 The model to evaluate.
+#             inputs (`Dict[str, Union[torch.Tensor, Any]]`):
+#                 The inputs and targets of the model.
 
-        Returns:
-            A dictionary containing the evaluation loss and the potential metrics computed from the predictions. The
-            dictionary also contains the epoch number which comes from the training state.
-        """
+#                 The dictionary will be unpacked before being fed to the model. Most models expect the targets under the
+#                 argument `labels`. Check your model's documentation for all accepted arguments.
+#             prediction_loss_only (`bool`):
+#                 Whether or not to return the loss only.
 
-        gen_kwargs = gen_kwargs.copy()
-        if gen_kwargs.get("max_length") is None and gen_kwargs.get("max_new_tokens") is None:
-            gen_kwargs["max_length"] = self.args.generation_max_length
-        gen_kwargs["num_beams"] = (
-            gen_kwargs["num_beams"] if gen_kwargs.get("num_beams") is not None else self.args.generation_num_beams
-        )
-        self._gen_kwargs = gen_kwargs
+#         Return:
+#             Tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]: A tuple with the loss, logits and
+#             labels (each being optional).
+#         """
 
-        return super().evaluate(eval_dataset, ignore_keys=ignore_keys, metric_key_prefix=metric_key_prefix)
+#         if not self.args.predict_with_generate or prediction_loss_only:
+#             return super().prediction_step(
+#                 model, inputs, prediction_loss_only=prediction_loss_only, ignore_keys=ignore_keys
+#             )
 
-    def predict(
-        self,
-        test_dataset: Dataset,
-        ignore_keys: Optional[List[str]] = None,
-        metric_key_prefix: str = "test",
-        **gen_kwargs
-    ) -> PredictionOutput:
-        """
-        Run prediction and returns predictions and potential metrics.
+#         has_labels = "labels" in inputs
+#         inputs = self._prepare_inputs(inputs)
 
-        Depending on the dataset and your use case, your test dataset may contain labels. In that case, this method
-        will also return metrics, like in `evaluate()`.
+#         # XXX: adapt synced_gpus for fairscale as well
+#         gen_kwargs = self._gen_kwargs.copy()
+#         if gen_kwargs.get("max_length") is None and gen_kwargs.get("max_new_tokens") is None:
+#             gen_kwargs["max_length"] = self.model.config.max_length
+#         gen_kwargs["num_beams"] = (
+#             gen_kwargs["num_beams"] if gen_kwargs.get("num_beams") is not None else self.model.config.num_beams
+#         )
+#         default_synced_gpus = True if is_deepspeed_zero3_enabled() else False
+#         gen_kwargs["synced_gpus"] = (
+#             gen_kwargs["synced_gpus"] if gen_kwargs.get("synced_gpus") is not None else default_synced_gpus
+#         )
 
-        Args:
-            test_dataset (`Dataset`):
-                Dataset to run the predictions on. If it is a [`~datasets.Dataset`], columns not accepted by the
-                `model.forward()` method are automatically removed. Has to implement the method `__len__`
-            ignore_keys (`List[str]`, *optional*):
-                A list of keys in the output of your model (if it is a dictionary) that should be ignored when
-                gathering predictions.
-            metric_key_prefix (`str`, *optional*, defaults to `"eval"`):
-                An optional prefix to be used as the metrics key prefix. For example the metrics "bleu" will be named
-                "eval_bleu" if the prefix is `"eval"` (default)
-            max_length (`int`, *optional*):
-                The maximum target length to use when predicting with the generate method.
-            num_beams (`int`, *optional*):
-                Number of beams for beam search that will be used when predicting with the generate method. 1 means no
-                beam search.
-            gen_kwargs:
-                Additional `generate` specific kwargs.
+#         if "attention_mask" in inputs:
+#             gen_kwargs["attention_mask"] = inputs.get("attention_mask", None)
+#         if "position_ids" in inputs:
+#             gen_kwargs["position_ids"] = inputs.get("position_ids", None)
+#         if "global_attention_mask" in inputs:
+#             gen_kwargs["global_attention_mask"] = inputs.get("global_attention_mask", None)
 
-        <Tip>
+#         # prepare generation inputs
+#         # some encoder-decoder models can have varying encoder's and thus
+#         # varying model input names
+#         if hasattr(self.model, "encoder") and self.model.encoder.main_input_name != self.model.main_input_name:
+#             generation_inputs = inputs[self.model.encoder.main_input_name]
+#         else:
+#             generation_inputs = inputs[self.model.main_input_name]
 
-        If your predictions or labels have different sequence lengths (for instance because you're doing dynamic
-        padding in a token classification task) the predictions will be padded (on the right) to allow for
-        concatenation into one array. The padding index is -100.
+#         gen_kwargs["input_ids"] = generation_inputs
+#         generated_tokens = self.model.generate(**gen_kwargs)
+#         generated_tokens = generated_tokens[:, generation_inputs.size()[-1]:]
 
-        </Tip>
+#         # in case the batch is shorter than max length, the output should be padded
+#         if gen_kwargs.get("max_length") is not None and generated_tokens.shape[-1] < gen_kwargs["max_length"]:
+#             generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_kwargs["max_length"])
+#         elif gen_kwargs.get("max_new_tokens") is not None and generated_tokens.shape[-1] < (
+#             gen_kwargs["max_new_tokens"] + 1
+#         ):
+#             generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_kwargs["max_new_tokens"] + 1)
 
-        Returns: *NamedTuple* A namedtuple with the following keys:
+#         loss = None
 
-            - predictions (`np.ndarray`): The predictions on `test_dataset`.
-            - label_ids (`np.ndarray`, *optional*): The labels (if the dataset contained some).
-            - metrics (`Dict[str, float]`, *optional*): The potential dictionary of metrics (if the dataset contained
-              labels).
-        """
+#         if self.args.prediction_loss_only:
+#             return (loss, None, None)
 
-        gen_kwargs = gen_kwargs.copy()
-        if gen_kwargs.get("max_length") is None and gen_kwargs.get("max_new_tokens") is None:
-            gen_kwargs["max_length"] = self.args.generation_max_length
-        gen_kwargs["num_beams"] = (
-            gen_kwargs["num_beams"] if gen_kwargs.get("num_beams") is not None else self.args.generation_num_beams
-        )
-        self._gen_kwargs = gen_kwargs
+#         if has_labels:
+#             labels = inputs["labels"]
+#             if gen_kwargs.get("max_length") is not None and labels.shape[-1] < gen_kwargs["max_length"]:
+#                 labels = self._pad_tensors_to_max_len(labels, gen_kwargs["max_length"])
+#             elif gen_kwargs.get("max_new_tokens") is not None and labels.shape[-1] < (
+#                 gen_kwargs["max_new_tokens"] + 1
+#             ):
+#                 labels = self._pad_tensors_to_max_len(labels, (gen_kwargs["max_new_tokens"] + 1))
+#         else:
+#             labels = None
 
+#         return (loss, generated_tokens, labels)
 
-        return super().predict(test_dataset, ignore_keys=ignore_keys, metric_key_prefix=metric_key_prefix)
+#     def _pad_tensors_to_max_len(self, tensor, max_length):
+#         if self.tokenizer is not None and hasattr(self.tokenizer, "pad_token_id"):
+#             # If PAD token is not defined at least EOS token has to be defined
+#             pad_token_id = (
+#                 self.tokenizer.pad_token_id if self.tokenizer.pad_token_id is not None else self.tokenizer.eos_token_id
+#             )
+#         else:
+#             if self.model.config.pad_token_id is not None:
+#                 pad_token_id = self.model.config.pad_token_id
+#             else:
+#                 raise ValueError("Pad_token_id must be set in the configuration of the model, in order to pad tensors")
 
-    def prediction_step(
-        self,
-        model: nn.Module,
-        inputs: Dict[str, Union[torch.Tensor, Any]],
-        prediction_loss_only: bool,
-        ignore_keys: Optional[List[str]] = None,
-    ) -> Tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]:
-        """
-        Perform an evaluation step on `model` using `inputs`.
-
-        Subclass and override to inject custom behavior.
-
-        Args:
-            model (`nn.Module`):
-                The model to evaluate.
-            inputs (`Dict[str, Union[torch.Tensor, Any]]`):
-                The inputs and targets of the model.
-
-                The dictionary will be unpacked before being fed to the model. Most models expect the targets under the
-                argument `labels`. Check your model's documentation for all accepted arguments.
-            prediction_loss_only (`bool`):
-                Whether or not to return the loss only.
-
-        Return:
-            Tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]: A tuple with the loss, logits and
-            labels (each being optional).
-        """
-
-        if not self.args.predict_with_generate or prediction_loss_only:
-            return super().prediction_step(
-                model, inputs, prediction_loss_only=prediction_loss_only, ignore_keys=ignore_keys
-            )
-
-        has_labels = "labels" in inputs
-        inputs = self._prepare_inputs(inputs)
-
-        # XXX: adapt synced_gpus for fairscale as well
-        gen_kwargs = self._gen_kwargs.copy()
-        if gen_kwargs.get("max_length") is None and gen_kwargs.get("max_new_tokens") is None:
-            gen_kwargs["max_length"] = self.model.config.max_length
-        gen_kwargs["num_beams"] = (
-            gen_kwargs["num_beams"] if gen_kwargs.get("num_beams") is not None else self.model.config.num_beams
-        )
-        default_synced_gpus = True if is_deepspeed_zero3_enabled() else False
-        gen_kwargs["synced_gpus"] = (
-            gen_kwargs["synced_gpus"] if gen_kwargs.get("synced_gpus") is not None else default_synced_gpus
-        )
-
-        if "attention_mask" in inputs:
-            gen_kwargs["attention_mask"] = inputs.get("attention_mask", None)
-        if "position_ids" in inputs:
-            gen_kwargs["position_ids"] = inputs.get("position_ids", None)
-        if "global_attention_mask" in inputs:
-            gen_kwargs["global_attention_mask"] = inputs.get("global_attention_mask", None)
-
-        # prepare generation inputs
-        # some encoder-decoder models can have varying encoder's and thus
-        # varying model input names
-        if hasattr(self.model, "encoder") and self.model.encoder.main_input_name != self.model.main_input_name:
-            generation_inputs = inputs[self.model.encoder.main_input_name]
-        else:
-            generation_inputs = inputs[self.model.main_input_name]
-
-        gen_kwargs["input_ids"] = generation_inputs
-        generated_tokens = self.model.generate(**gen_kwargs)
-        generated_tokens = generated_tokens[:, generation_inputs.size()[-1]:]
-
-        # in case the batch is shorter than max length, the output should be padded
-        if gen_kwargs.get("max_length") is not None and generated_tokens.shape[-1] < gen_kwargs["max_length"]:
-            generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_kwargs["max_length"])
-        elif gen_kwargs.get("max_new_tokens") is not None and generated_tokens.shape[-1] < (
-            gen_kwargs["max_new_tokens"] + 1
-        ):
-            generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_kwargs["max_new_tokens"] + 1)
-
-        loss = None
-
-        if self.args.prediction_loss_only:
-            return (loss, None, None)
-
-        if has_labels:
-            labels = inputs["labels"]
-            if gen_kwargs.get("max_length") is not None and labels.shape[-1] < gen_kwargs["max_length"]:
-                labels = self._pad_tensors_to_max_len(labels, gen_kwargs["max_length"])
-            elif gen_kwargs.get("max_new_tokens") is not None and labels.shape[-1] < (
-                gen_kwargs["max_new_tokens"] + 1
-            ):
-                labels = self._pad_tensors_to_max_len(labels, (gen_kwargs["max_new_tokens"] + 1))
-        else:
-            labels = None
-
-        return (loss, generated_tokens, labels)
-
-    def _pad_tensors_to_max_len(self, tensor, max_length):
-        if self.tokenizer is not None and hasattr(self.tokenizer, "pad_token_id"):
-            # If PAD token is not defined at least EOS token has to be defined
-            pad_token_id = (
-                self.tokenizer.pad_token_id if self.tokenizer.pad_token_id is not None else self.tokenizer.eos_token_id
-            )
-        else:
-            if self.model.config.pad_token_id is not None:
-                pad_token_id = self.model.config.pad_token_id
-            else:
-                raise ValueError("Pad_token_id must be set in the configuration of the model, in order to pad tensors")
-
-        padded_tensor = pad_token_id * torch.ones(
-            (tensor.shape[0], max_length), dtype=tensor.dtype, device=tensor.device
-        )
-        padded_tensor[:, : tensor.shape[-1]] = tensor
-        return padded_tensor
+#         padded_tensor = pad_token_id * torch.ones(
+#             (tensor.shape[0], max_length), dtype=tensor.dtype, device=tensor.device
+#         )
+#         padded_tensor[:, : tensor.shape[-1]] = tensor
+#         return padded_tensor
 
 
 if __name__ == "__main__":
