@@ -19,9 +19,9 @@ Fine-tuning the library models for sequence to sequence for P-Tuning v2
 # You can also adapt this script on your own sequence to sequence task. Pointers for this are left as comments.
 
 # CUDA_VISIBLE_DEVICES=-1 python finetune-p-tuning-v2.py
-
-# accelerate launch --cpu --num_machines=1 --num_processes=1 --num_cpu_threads_per_process=1 finetune-p-tuning-v2.py
 # accelerate launch --cpu --num_machines=1 --num_processes=4 --num_cpu_threads_per_process=1 finetune-p-tuning-v2.py
+# accelerate launch --num_machines=1 --num_processes=1 --gpu_ids=1 finetune-p-tuning-v2.py
+
 
 # import logging
 import os
