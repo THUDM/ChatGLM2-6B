@@ -38,7 +38,7 @@ train_ds = dataset['train'].select(range(100))
 print('train_ds', train_ds)
 
 trainer = Trainer(
-    model=model, 
+    model=model,
     train_dataset=train_ds,
     args=TrainingArguments(
         per_device_train_batch_size=4, 
