@@ -25,7 +25,7 @@ print('result:', tokenizer.decode(output_tokens[0], skip_special_tokens=True))
 print('***************** begin lora finetune *********************')
 from peft import LoraConfig, TaskType
 from peft import get_peft_model
-
+print(model)
 lora_config = LoraConfig(
     r=16,
     target_modules=["q_proj", "v_proj"],
@@ -72,6 +72,7 @@ print('Save', lora_checkpoint)
 print('***************** after lora finetune *********************')
 from peft import PeftModel, PeftConfig
 config = PeftConfig.from_pretrained(lora_checkpoint)
+# print(config)
 model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path)
 lora_model = PeftModel.from_pretrained(model, lora_checkpoint)
 batch = tokenizer(prompt, return_tensors='pt')
