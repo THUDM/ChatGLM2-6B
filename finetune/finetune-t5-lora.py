@@ -3,7 +3,7 @@ import torch
 device = torch.device("cpu")
 
 checkpoint = "/Users/hhwang/models/t5-small"
-# checkpoint = "/Users/hhwang/models/flan-t5-small"
+checkpoint = "/Users/hhwang/models/flan-t5-small"
 prompt = "translate English to German: That is good"
 print('********* before finetune ***********')
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
