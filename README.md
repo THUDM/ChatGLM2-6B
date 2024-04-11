@@ -47,6 +47,7 @@ ChatGLM2-6B 开源模型旨在与开源社区一起推动大模型技术发展�
 * [Chuanhu Chat](https://github.com/GaiZhenbiao/ChuanhuChatGPT): 为各个大语言模型和在线模型API提供美观易用、功能丰富、快速部署的用户界面，支持ChatGLM2-6B。
 
 支持 ChatGLM-6B 和相关应用在线训练的示例项目：
+* [ChatGLM2-6B 在腾讯云部署教程](https://cloud.tencent.com/document/product/1721/104848)
 * [ChatGLM2-6B 的部署与微调教程](https://www.heywhale.com/mw/project/64984a7b72ebe240516ae79c)
 
 ## 评测结果
