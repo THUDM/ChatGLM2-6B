@@ -2,7 +2,7 @@ protobuf
 transformers==4.30.2
 cpm_kernels
 torch>=2.0
-gradio
+gradio==3.39.0
 mdtex2html
 sentencepiece
 accelerate
