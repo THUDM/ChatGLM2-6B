@@ -195,6 +195,13 @@ pip install -r requirements.txt
 如果这些方法无法帮助你入睡,你可以考虑咨询医生或睡眠专家,寻求进一步的建议。
 ```
 
+* 针对macbook pro m1max 电脑，请使用以下命令 ``AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device='cuda')``替换为下面的语句
+
+```python
+model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True).half().to('mps')
+```
+
+
 #### 从本地加载模型
 以上代码会由 `transformers` 自动下载模型实现和参数。完整的模型实现在 [Hugging Face Hub](https://huggingface.co/THUDM/chatglm2-6b)。如果你的网络环境较差，下载模型参数可能会花费较长时间甚至失败。此时可以先将模型下载到本地，然后从本地加载。
 
