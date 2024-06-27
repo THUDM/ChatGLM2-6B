@@ -266,6 +266,19 @@ model = AutoModel.from_pretrained("your local path", trust_remote_code=True).to(
 
 Loading a FP16 ChatGLM-6B model requires about 13GB of memory. Machines with less memory (such as a MacBook Pro with 16GB of memory) will use the virtual memory on the hard disk when there is insufficient free memory, resulting in a serious slowdown in inference speed.
 
+### NPU Deployment
+
+If your device is Ascend, it is possible to use the NPU backend to run ChatGLM-6B on Ascend device. First, you need to install torch and torch_npu:
+```shell
+pip install torch==2.1.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install torch_npu==2.1.0
+```
+
+Then you need to change the code to load model to NPU backend:
+```python
+model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device='npu')
+```
+
 ## License
 
 The code of this repository is licensed under [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). The use of the ChatGLM2-6B model weights is subject to the [Model License](MODEL_LICENSE). ChatGLM2-6B weights are **completely open** for academic research, and **free commercial use** is also allowed after completing the [questionnaire](https://open.bigmodel.cn/mla/form).

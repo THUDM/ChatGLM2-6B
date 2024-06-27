@@ -339,6 +339,20 @@ model = AutoModel.from_pretrained("your local path", trust_remote_code=True).to(
 
 在 Mac 上进行推理也可以使用 [ChatGLM.cpp](https://github.com/li-plus/chatglm.cpp)
 
+### NPU 部署
+
+如果你拥有华为昇腾 Ascend 硬件，可以使用 NPU 后端运行 ChatGLM2-6B, 需按照如下步骤安装依赖:
+
+```shell
+pip install torch==2.1.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install torch_npu==2.1.0
+```
+
+同时，模型加载修改后端:
+```python
+model = AutoModel.from_pretrained("THUDM/chatglm2-6b", trust_remote_code=True, device='npu')
+```
+
 ### 多卡部署
 如果你有多张 GPU，但是每张 GPU 的显存大小都不足以容纳完整的模型，那么可以将模型切分在多张GPU上。首先安装 accelerate: `pip install accelerate`，然后通过如下方法加载模型：
 ```python
