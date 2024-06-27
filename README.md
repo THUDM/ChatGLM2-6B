@@ -298,7 +298,22 @@ if __name__ == "__main__":
         if hasattr(chunk.choices[0].delta, "content"):
             print(chunk.choices[0].delta.content, end="", flush=True)
 ```
+### Docker 部署
 
+复制一份配置文件 `.env.template` 到`.env`，默认启动模式为`webui`
+
+如前文所述，在`THUDM\chatglm2-6b`文件夹放置好对应的模型文件
+
+编译镜像，启动程序并加载`int4`模型
+> 显存小于`8G`可以使用此启动方式
+```
+docker-compose --profile int4 up -d
+```
+编译镜像，启动程序并加载完整模型
+> 大约需要`13G`显存
+```
+docker-compose --profile int16 up -d
+```
 
 ## 低成本部署
 
