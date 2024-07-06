@@ -356,6 +356,8 @@ model = load_model_on_gpus("THUDM/chatglm2-6b", num_gpus=2)
 
 如果你觉得我们的工作有帮助的话，请考虑引用下列论文，ChatGLM2-6B 的论文会在近期公布，敬请期待～
 
+123
+
 ```
 @misc{glm2024chatglm,
       title={ChatGLM: A Family of Large Language Models from GLM-130B to GLM-4 All Tools}, 
