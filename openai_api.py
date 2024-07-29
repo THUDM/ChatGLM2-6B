@@ -135,7 +135,7 @@ async def predict(query: str, history: List[List[str]], model_id: str):
         finish_reason=None
     )
     chunk = ChatCompletionResponse(model=model_id, choices=[choice_data], object="chat.completion.chunk")
-    yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
+    yield "{}".format(chunk.model_dump_json(exclude_unset=True, ensure_ascii=False))
 
     current_length = 0
 
@@ -152,7 +152,7 @@ async def predict(query: str, history: List[List[str]], model_id: str):
             finish_reason=None
         )
         chunk = ChatCompletionResponse(model=model_id, choices=[choice_data], object="chat.completion.chunk")
-        yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
+        yield "{}".format(chunk.model_dump_json(exclude_unset=True, ensure_ascii=False))
 
 
     choice_data = ChatCompletionResponseStreamChoice(
@@ -161,7 +161,7 @@ async def predict(query: str, history: List[List[str]], model_id: str):
         finish_reason="stop"
     )
     chunk = ChatCompletionResponse(model=model_id, choices=[choice_data], object="chat.completion.chunk")
-    yield "{}".format(chunk.json(exclude_unset=True, ensure_ascii=False))
+    yield "{}".format(chunk.model_dump_json(exclude_unset=True, ensure_ascii=False))
     yield '[DONE]'
 
 
